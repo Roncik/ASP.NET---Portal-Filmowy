@@ -27,7 +27,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Genre)
             </th>
-            <th></th>
+            <th>
+                Średnia ocen
+            </th>
+            <th>
+                Opcje
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -44,6 +49,27 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Genre.Name)
+            </td>
+            <td>
+                    @{
+                        // Logika obliczania średniej
+                        double avg = 0;
+                        if (item.Reviews != null && item.Reviews.Any())
+                        {
+                            avg = item.Reviews.Average(r => r.Rating);
+                        }
+                    }
+
+                    @if (avg > 0)
+                    {
+                            <span style="font-weight:bold; color:#ffc107;">
+                            @avg.ToString("0.0") / 10
+                            </span>
+                    }
+                    else
+                    {
+                            <span class="text-muted">Brak ocen</span>
+                    }
             </td>
             <td>
                     @if (User.IsInRole("Admin"))

@@ -32,13 +32,14 @@ namespace PortalFilmowy.Models
         public string Director { get; set; } = string.Empty;
 
         // Relacja do Genre (N:1)
+        // Więzy integralności danych - Movie musi mieć przypisane Genre
         [Display(Name = "Gatunek")]
         public int GenreId { get; set; }
 
         [ForeignKey("GenreId")]
         public virtual Genre? Genre { get; set; }
 
-        // Relacja do Reviews (1:N) [cite: 1]
+        // Relacja do Reviews (1:N)
         public virtual ICollection<Review>? Reviews { get; set; }
     }
 }

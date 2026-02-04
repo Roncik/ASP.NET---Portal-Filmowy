@@ -19,11 +19,13 @@ namespace PortalFilmowy.Controllers
         // GET: Movies
         public async Task<IActionResult> Index()
         {
-            var movies = _context.Movies.Include(m => m.Genre);
+            var movies = _context.Movies
+                .Include(m => m.Genre)
+                .Include(m => m.Reviews);
             return View(await movies.ToListAsync());
         }
 
-        // --- WŁASNA METODA LINQ (Search) --- [cite: 1]
+        // WŁASNA METODA LINQ (Search) --- [cite: 1]
         public async Task<IActionResult> Search(string searchString, int? genreId, string sortOrder)
         {
             // Ładowanie listy gatunków do Dropdowna
@@ -74,8 +76,6 @@ namespace PortalFilmowy.Controllers
             ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", movie.GenreId);
             return View(movie);
         }
-
-        // ... Tutaj dodaj Edit, Delete, Details (najlepiej wygeneruj przez Scaffolding) ...
 
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)

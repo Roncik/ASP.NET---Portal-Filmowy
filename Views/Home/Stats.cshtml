@@ -14,9 +14,17 @@
             <div class="card bg-dark border-light">
                 <div class="card-header">Najwyżej oceniany film</div>
                 <div class="card-body">
-                    <h3>Incepcja</h3>
-                    <p>Średnia ocena użytkowników:</p>
-                    <star-rating value="9"></star-rating>
+                    <h3 class="text-warning">@ViewBag.BestMovieTitle</h3>
+
+                    @if (@ViewBag.BestMovieRatingInt > 0)
+                    {
+                                    <p>Średnia ocena użytkowników: <strong>@ViewBag.BestMovieRatingVal.ToString("0.0")/10</strong></p>
+                                <star-rating value="@ViewBag.BestMovieRatingInt"></star-rating>
+                    }
+                    else
+                    {
+                            <p class="text-muted">Brak wystarczającej liczby głosów.</p>
+                    }
                 </div>
             </div>
         </div>

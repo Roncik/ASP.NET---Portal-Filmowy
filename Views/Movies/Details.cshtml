@@ -1,4 +1,5 @@
 ﻿@model PortalFilmowy.Models.Movie
+@using PortalFilmowy.Helpers 
 
 @{
     ViewData["Title"] = "Szczegóły - " + Model.Title;
@@ -19,6 +20,34 @@
 
                 <dt class="col-sm-3">Data premiery</dt>
                 <dd class="col-sm-9">@Model.ReleaseDate.ToShortDateString()</dd>
+
+                <dt class="col-sm-3">Średnia ocena</dt>
+                <dd class="col-sm-9">
+                    @{
+                        // 1. Inicjalizujemy zmienne
+                        double average = 0;
+                        double starValue = 0;
+
+                        // 2. Sprawdzamy czy są opinie, aby uniknąć dzielenia przez zero
+                        if (Model.Reviews != null && Model.Reviews.Any())
+                        {
+                            average = Model.Reviews.Average(r => r.Rating);
+                            // 3. Zaokrąglamy średnią (np. 7.6 -> 8) dla Twojego helpera
+                            starValue = average;
+                        }
+                    }
+
+                    <star-rating value="@starValue"></star-rating>
+
+                    @if (starValue > 0)
+                    {
+                            <span class="text-muted ms-2">(@average.ToString("0.0") / 10)</span>
+                    }
+                    else
+                    {
+                            <span class="text-muted small">(Brak ocen)</span>
+                    }
+                </dd>
             </dl>
 
             <div class="mt-3">
