@@ -1,0 +1,130 @@
+﻿@model PortalFilmowy.Models.Movie
+
+@{
+    ViewData["Title"] = "Szczegóły - " + Model.Title;
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-dark text-white">
+            <h2 class="mb-0">@Model.Title <span class="text-muted" style="font-size: 0.6em;">(@Model.ReleaseDate.Year)</span></h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Gatunek</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Genre.Name)</dd>
+
+                <dt class="col-sm-3">Reżyser</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Director)</dd>
+
+                <dt class="col-sm-3">Data premiery</dt>
+                <dd class="col-sm-9">@Model.ReleaseDate.ToShortDateString()</dd>
+            </dl>
+
+            <div class="mt-3">
+                @if (User.IsInRole("Admin"))
+                {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edytuj</a> 
+                        <span>|</span>
+                }
+                <a asp-action="Index" class="btn btn-secondary">Powrót do listy</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4 border-primary">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Twoja opinia</h4>
+        </div>
+        <div class="card-body">
+            @if (!User.Identity.IsAuthenticated)
+            {
+                    <div class="alert alert-warning">
+                        Musisz się <a href="/Identity/Account/Login">zalogować</a>, aby dodać opinię.
+                    </div>
+            }
+            else
+            {
+                // Sprawdzamy, czy przekazano istniejącą opinię z kontrolera
+                var myReview = ViewBag.UserReview as PortalFilmowy.Models.Review;
+
+                if (myReview != null)
+                {
+                    // --- SCENARIUSZ A: UŻYTKOWNIK MA JUŻ OPINIĘ ---
+                            <div class="alert alert-info">
+                                <strong>Już oceniłeś ten film!</strong>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 text-center">
+                                    <h1 class="display-4">@myReview.Rating/10</h1>
+                                     <star-rating value="@myReview.Rating"></star-rating>
+                                </div>
+                                <div class="col-md-10">
+                                    <h5>Twoja recenzja:</h5>
+                                    <p class="font-italic">"@myReview.Comment"</p>
+
+                                    <div class="mt-3">
+                                        <a asp-action="EditReview" asp-route-id="@myReview.Id" class="btn btn-warning btn-sm">Edytuj</a>
+
+                                        <form asp-action="DeleteReview" method="post" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć swoją opinię?');">
+                                            <input type="hidden" name="id" value="@myReview.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                }
+                else
+                {
+                    // --- SCENARIUSZ B: UŻYTKOWNIK NIE MA OPINII (Formularz dodawania) ---
+                            <form asp-action="AddReview" method="post">
+                                <input type="hidden" name="MovieId" value="@Model.Id" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">Twoja ocena (1-10):</label>
+                                    <select name="Rating" class="form-select w-auto">
+                                @for (int i = 10; i >= 1; i--)
+                                {
+                                                <option value="@i">@i - @(i == 10 ? "Arcydzieło" : "")</option>
+                                }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Komentarz:</label>
+                                    <textarea name="Comment" class="form-control" rows="3" placeholder="Co sądzisz o tym filmie?"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-success">Opublikuj opinię</button>
+                            </form>
+                }
+            }
+        </div>
+    </div>
+
+    <h3>Opinie użytkowników (@(Model.Reviews?.Count ?? 0))</h3>
+    <hr />
+
+    @if (Model.Reviews != null && Model.Reviews.Any())
+    {
+        @foreach (var review in Model.Reviews.OrderByDescending(r => r.Id))
+        {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title text-primary">@review.UserName</h5>
+                                <div>
+                                    <star-rating value="@review.Rating"></star-rating>
+                                    <span class="badge bg-secondary ms-2">@review.Rating/10</span>
+                                </div>
+                            </div>
+                            <p class="card-text mt-2">"@review.Comment"</p>
+                        </div>
+                    </div>
+        }
+    }
+    else
+    {
+            <p class="text-muted">Ten film nie ma jeszcze żadnych opinii. Bądź pierwszy!</p>
+    }
+</div>

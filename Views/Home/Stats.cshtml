@@ -1,0 +1,33 @@
+﻿@using PortalFilmowy.Helpers
+@{
+    ViewData["Title"] = "Statystyki";
+    // Użycie Layoutu Admina 
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container text-white">
+    <h1>Panel Administratora - Statystyki</h1>
+    <hr />
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card bg-dark border-light">
+                <div class="card-header">Najwyżej oceniany film</div>
+                <div class="card-body">
+                    <h3>Incepcja</h3>
+                    <p>Średnia ocena użytkowników:</p>
+                    <star-rating value="9"></star-rating>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card bg-dark border-light">
+                <div class="card-body">
+                    <h5>Liczba filmów w bazie: <span class="badge bg-primary">@ViewBag.moviesCount</span></h5>
+                    <h5>Liczba opinii: <span class="badge bg-info">@ViewBag.reviewsCount</span></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

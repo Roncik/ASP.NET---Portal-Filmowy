@@ -1,0 +1,50 @@
+﻿@model IEnumerable<PortalFilmowy.Models.Movie>
+@using PortalFilmowy.Helpers 
+
+@{
+    ViewData["Title"] = "Wyszukiwarka";
+    // Użycie Layoutu publicznego
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+}
+
+<h2>Znajdź Film</h2>
+
+<form asp-action="Search" method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="searchString" class="form-control" placeholder="Tytuł lub reżyser..." />
+    </div>
+    <div class="col-md-3">
+        <select name="genreId" class="form-control" asp-items="ViewBag.Genres">
+            <option value="">-- Wszystkie gatunki --</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="sortOrder" class="form-control">
+            <option value="">Sortuj domyślnie</option>
+            <option value="date_desc">Data premiery (od najnowszych)</option>
+            <option value="title">Alfabetycznie</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Szukaj</button>
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@item.Genre?.Name</h6>
+                        <p>Reżyser: @item.Director</p>
+                        <p>
+                            Status: @Html.MovieStatusBadge(item.ReleaseDate)
+                        </p>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Szczegóły</a>
+                    </div>
+                </div>
+            </div>
+    }
+</div>
